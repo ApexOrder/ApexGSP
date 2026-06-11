@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  OWNER
+  ADMIN
+}
+
+enum ServerStatus {
+  STOPPED
+  INSTALLING
+  UPDATING
+  STARTING
+  RUNNING
+  STOPPING
+  ERROR
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  discordId     String?   @unique
+  role          Role      @default(ADMIN)
+
+  accounts Account[]
+  sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model GameServer {
+  id             String       @id @default(cuid())
+  name           String
+  slug           String       @unique
+  game           String
+  installPath    String
+  status         ServerStatus @default(STOPPED)
+  gamePort       Int
+  queryPort      Int?
+  maxPlayers     Int
+  world          String       @default("Navezgane")
+  worldSeed      String       @default("ApexPanel")
+  worldSize      Int          @default(6144)
+  difficulty     Int          @default(0)
+  xpMultiplier   Int          @default(100)
+  lootAbundance  Int          @default(100)
+  bloodMoonFreq  Int          @default(7)
+  bloodMoonCount Int          @default(8)
+  serverPassword String?
+  eacEnabled     Boolean      @default(true)
+  jobs           Job[]
+
+  installed     Boolean   @default(false)
+  containerName String?
+  lastStartedAt DateTime?
+  lastStoppedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETE
+  FAILED
+  CANCELLED
+}
+
+enum JobType {
+  BACKUP_CREATE
+  BACKUP_RESTORE
+  STEAM_INSTALL
+  STEAM_UPDATE
+  MOD_INSTALL
+  WORLD_GENERATE
+  SCHEDULED_TASK
+}
+
+model Job {
+  id       String    @id @default(cuid())
+  serverId String
+  type     JobType
+  status   JobStatus @default(PENDING)
+
+  title    String
+  message  String?
+  progress Int     @default(0)
+
+  payload Json?
+  result  Json?
+  error   String?
+
+  startedAt  DateTime?
+  finishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  server GameServer @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([serverId])
+  @@index([status])
+  @@index([type])
+}
