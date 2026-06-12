@@ -120,11 +120,12 @@ enum JobType {
   MOD_INSTALL
   WORLD_GENERATE
   SCHEDULED_TASK
+  HOST_STEAMCMD_INSTALL
 }
 
 model Job {
   id       String    @id @default(cuid())
-  serverId String
+  serverId String?
   type     JobType
   status   JobStatus @default(PENDING)
 
@@ -142,7 +143,7 @@ model Job {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  server GameServer @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  server GameServer? @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
   @@index([serverId])
   @@index([status])

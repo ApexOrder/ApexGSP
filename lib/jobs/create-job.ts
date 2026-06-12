@@ -8,7 +8,7 @@ export async function createJob({
   message,
   payload,
 }: {
-  serverId: string;
+  serverId?: string;
   type: JobType;
   title: string;
   message?: string;
@@ -16,13 +16,21 @@ export async function createJob({
 }) {
   return prisma.job.create({
     data: {
-      serverId,
       type,
       title,
       message,
       payload: payload as any,
       status: "PENDING",
       progress: 0,
+      ...(serverId
+        ? {
+            server: {
+              connect: {
+                id: serverId,
+              },
+            },
+          }
+        : {}),
     },
   });
 }

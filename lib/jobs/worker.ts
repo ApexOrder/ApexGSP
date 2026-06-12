@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { runBackupCreateJob } from "@/lib/jobs/handlers/backup-create";
 import { runSteamInstallJob } from "@/lib/jobs/handlers/steam-install";
+import { runHostSteamCmdInstallJob } from "@/lib/jobs/handlers/host-steamcmd-install";
 
 let isWorking = false;
 
@@ -36,8 +37,11 @@ export async function runJobWorker() {
   await runBackupCreateJob(job);
 } else if (job.type === "STEAM_INSTALL") {
   await runSteamInstallJob(job);
-} else {        throw new Error(`No handler registered for job type: ${job.type}`);
-      }
+} else if (job.type === "HOST_STEAMCMD_INSTALL") {
+  await runHostSteamCmdInstallJob(job);
+} else {
+  throw new Error(`No handler registered for job type: ${job.type}`);
+}
 
       await prisma.job.update({
         where: { id: job.id },

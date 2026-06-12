@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { runCommand } from "@/lib/system/command";
 
 export async function runBackupCreateJob(job: Job) {
+  if (!job.serverId) {
+  throw new Error("Backup job is missing serverId.");
+}
   const server = await prisma.gameServer.findUnique({
     where: { id: job.serverId },
   });

@@ -7,6 +7,9 @@ import { create7dtdServerConfig } from "@/lib/games/7dtd/config";
 import { getGameDefinition } from "@/lib/games/registry";
 
 export async function runSteamInstallJob(job: Job) {
+  if (!job.serverId) {
+  throw new Error("Backup job is missing serverId.");
+}
   const server = await prisma.gameServer.findUnique({
     where: { id: job.serverId },
   });
