@@ -29,10 +29,14 @@ export function PanelShell({
               Game Servers
             </Link>
 
+            <Link className="block rounded-xl px-4 py-3 hover:bg-emerald-500/10" href="/host">
+              Host Management
+            </Link>
             {isOwner && (
               <Link className="block rounded-xl px-4 py-3 hover:bg-emerald-500/10" href="/admin/users">
                 User Access
               </Link>
+              
             )}
           </nav>
         </aside>

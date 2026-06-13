@@ -11,6 +11,12 @@ export async function runHostSteamCmdInstallJob(job: Job) {
     },
   });
 
+  if (process.getuid && process.getuid() !== 0) {
+    throw new Error(
+      "SteamCMD host install requires root privileges. Run ApexPanel on the target Linux host as root/admin, or install SteamCMD manually on this development environment.",
+    );
+  }
+
   try {
     await runCommand("which", ["steamcmd"], "/");
 

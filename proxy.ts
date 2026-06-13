@@ -9,6 +9,6 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    "/((?!api/auth|api/jobs/tick|login|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|api/jobs/tick|api/host/install-steamcmd|login|login/discord|_next/static|_next/image|favicon.ico).*)",
   ],
 };

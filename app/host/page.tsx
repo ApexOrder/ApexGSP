@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PanelShell } from "@/components/panel/panel-shell";
-import { installHostSteamCmd } from "@/lib/host/actions";
 import { redirect } from "next/navigation";
 
 const jobStyles = {
@@ -35,9 +34,14 @@ export default async function HostPage() {
       {hasActiveJobs && <meta httpEquiv="refresh" content="3" />}
 
       <div>
-        <h2 className="text-3xl font-bold text-white">Host Management</h2>
+        <p className="text-sm uppercase tracking-[0.35em] text-emerald-400">
+          ApexPanel Host
+        </p>
+        <h2 className="mt-3 text-3xl font-bold text-white">
+          Host Management
+        </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          Install and manage system dependencies required by ApexPanel.
+          Install and manage system dependencies required by game servers.
         </p>
       </div>
 
@@ -52,11 +56,12 @@ export default async function HostPage() {
             DayZ, Valheim, Rust and Palworld.
           </p>
 
-          <form action={installHostSteamCmd} className="mt-5">
-            <button className="rounded-xl bg-emerald-500 px-5 py-3 font-semibold text-black hover:bg-emerald-400">
-              Install SteamCMD
-            </button>
-          </form>
+          <a
+            href="/api/host/install-steamcmd"
+            className="mt-5 inline-block rounded-xl bg-emerald-500 px-5 py-3 font-semibold text-black hover:bg-emerald-400"
+          >
+            Install SteamCMD
+          </a>
         </div>
 
         <div className="rounded-2xl border border-yellow-500/20 bg-black/40 p-6 shadow-lg shadow-yellow-950/10">
